@@ -1,5 +1,6 @@
+//@ts-check
 /**
- * @type {WebSocket}
+ * @type {WebSocket?}
  */
 let socket;
 const listeners = new Map();
@@ -16,7 +17,7 @@ let requestId = 0;
  *      // Code for requests or subscribes here
  *  }, []);
  * ```
- * @returns {void}
+ * @returns {WebSocket}
  */
 export function connect() {
     if (socket) {
@@ -29,12 +30,14 @@ export function connect() {
 
     socket.onmessage = (event) => {
         /**
-         * @typedef {"log"|"reponse"|"error"} typeResonse more to come
-         * @type {{type: typeResonse, id: number, payload: any}}
+         * @type {wsMsg<typeMsg, any>}
          */
         const msg = JSON.parse(event.data);
 
-        if (msg.type === "response") {
+        if ( msg.type === "response" ||
+             msg.type === "error" ||
+             msg.type === "jobComplete"
+        ) {
             const resolver = pending.get(msg.id);
 
             if (resolver) {
@@ -49,7 +52,7 @@ export function connect() {
         const subs = listeners.get(msg.type);
 
         if (subs) {
-            subs.forEach(fn => fn(msg.payload));
+            subs.forEach(/**@type {(value: any) => void}*/fn => fn(msg.payload));
         }
     };
 
@@ -85,8 +88,8 @@ export function connect() {
  *      return unsub;
  *  }, []);
  * ```
- * @param {string} type 
- * @param {(any) => void} handler 
+ * @param {typeMsg} type Message type
+ * @param {(data: wsMsg<typeMsg, any>["payload"]) => void} handler payload return
  * @returns {() => void}
  */
 export function subscribe(type, handler) {
@@ -102,7 +105,7 @@ export function subscribe(type, handler) {
 };
 
 /**
- * Make a request to the server request
+ * Make a single request / response to the server.
  * 
  * @async
  * @example
@@ -113,20 +116,29 @@ export function subscribe(type, handler) {
  *     console.log(res);
  * };
  * ```
- * @param {string} action 
- * @param {any?} payload 
- * @returns {Promise<any>}
+ * @param {string} command command
+ * @param {any?} data Message data
+ * @returns {Promise<responseMsg["payload"]>} return payload
  */
-export function request(action, payload = {}) {
+export function request(command, data = "") {
     return new Promise((resolve) => {
+        if(!socket){
+            console.error("WebSocket request made before connection was started.");
+
+            resolve({message:"Error"});
+        }
+
         const id = requestId++;
 
         pending.set(id, resolve);
 
-        socket.send(JSON.stringify({
-            type: action,
-            id,
-            payload
+        socket?.send(JSON.stringify({
+            type: "command",
+            id: id,
+            payload: {
+                command: command,
+                data: data
+            }
         }));
     });
 };

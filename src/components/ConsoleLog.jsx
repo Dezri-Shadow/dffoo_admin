@@ -16,14 +16,14 @@ export default function ConsoleLog() {
     useEffect(() => {
         connect();
 
-        const unsub = subscribe("log", (/**@type {{text:String, html:string}}*/ data) => {
-            setTextLogs((prev) => [...prev, data.text]);
+        const unsub = subscribe("log", (/**@type {logMsg["payload"]}*/ payload) => {
+            setTextLogs((prev) => [...prev, payload.text]);
 
             setLogs((prev) => [
                 ...prev,
                 {
                     id: idRef.current++,
-                    html: data.html,
+                    html: payload.html,
                 }
             ]);
         });
