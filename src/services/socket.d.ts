@@ -7,6 +7,12 @@ type id = number;
  */
 type typeMsg = "log"|"error"|"response"|"command"|"jobStarted"|"jobProgress"|"jobComplete";
 /**
+ * Message type to subscribe (has more than 1 response) 
+ * 
+ * Jobs use `jobId` to track
+ */
+type typeMsgSubscribe = "log"|"jobProgress"|"jobComplete";
+/**
  * Basic request and response
  */
 type wsMsg<typeMsg, Payload> = {type: typeMsg, id: id, payload: Payload };
@@ -31,9 +37,9 @@ type commandMsg = wsMsg<"command", commandPayload>;
 type responseMsg = wsMsg<"response", any>;
 type jobStatus = "start"|"running"|"error"|"complete";
 /**
- * progress is % of 100
+ * `progress` is % of 100
  */
-type jobProgressPayload = {status: jobStatus, progress: number};
+type jobProgressPayload = {jobId: number, status: jobStatus, progress: number};
 /**
  * jobStarted message
  */

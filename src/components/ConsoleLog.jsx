@@ -16,14 +16,14 @@ export default function ConsoleLog() {
     useEffect(() => {
         connect();
 
-        const unsub = subscribe("log", (/**@type {logMsg["payload"]}*/ payload) => {
-            setTextLogs((prev) => [...prev, payload.text]);
+        const unsub = subscribe("log", (/**@type {logMsg}*/ data) => {
+            setTextLogs((prev) => [...prev, data.payload.text]);
 
             setLogs((prev) => [
                 ...prev,
                 {
                     id: idRef.current++,
-                    html: payload.html,
+                    html: data.payload.html,
                 }
             ]);
         });
@@ -37,7 +37,7 @@ export default function ConsoleLog() {
 
     function clearLogs() {
         setLogs([]);
-    }
+    };
 
     async function copyToClipboard() {
         if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
@@ -51,7 +51,7 @@ export default function ConsoleLog() {
         } else {
             fallbackCopyToClipboard(textLogs.join('\n'));
         }
-    }
+    };
 
     /**
      * 
@@ -78,7 +78,7 @@ export default function ConsoleLog() {
             alert('Clipboard Fallback Error: unable to copy' + err);
         }
         document.body.removeChild(textArea);
-    }
+    };
 
     return (
         <div className="logWraper">

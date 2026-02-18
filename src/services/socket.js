@@ -20,7 +20,7 @@ let requestId = 0;
  * @returns {WebSocket}
  */
 export function connect() {
-    if (socket) {
+    if (socket != undefined) {
         return socket;
     };
 
@@ -33,26 +33,27 @@ export function connect() {
          * @type {wsMsg<typeMsg, any>}
          */
         const msg = JSON.parse(event.data);
-
+        /** non {@link typeMsgSubscribe} */
         if ( msg.type === "response" ||
              msg.type === "error" ||
-             msg.type === "jobComplete"
+             msg.type === "jobStarted" ||
+             msg.type === "command"
         ) {
             const resolver = pending.get(msg.id);
 
             if (resolver) {
-                resolver(msg.payload);
+                resolver(msg);
 
                 pending.delete(msg.id);
             }
 
-            return;
+            return socket;
         }
 
         const subs = listeners.get(msg.type);
 
         if (subs) {
-            subs.forEach(/**@type {(value: any) => void}*/fn => fn(msg.payload));
+            subs.forEach(/**@type {(value: any) => void}*/fn => fn(msg));
         }
     };
 
@@ -89,7 +90,7 @@ export function connect() {
  *  }, []);
  * ```
  * @param {typeMsg} type Message type
- * @param {(data: wsMsg<typeMsg, any>["payload"]) => void} handler payload return
+ * @param {(data: wsMsg<typeMsg, any>) => void} handler payload return
  * @returns {() => void}
  */
 export function subscribe(type, handler) {
@@ -118,17 +119,17 @@ export function subscribe(type, handler) {
  * ```
  * @param {string} command command
  * @param {any?} data Message data
- * @returns {Promise<responseMsg["payload"]>} return payload
+ * @returns {Promise<any>} return payload
  */
 export function request(command, data = "") {
     return new Promise((resolve) => {
-        if(!socket){
+        const id = requestId++;
+
+        if(socket == undefined){
             console.error("WebSocket request made before connection was started.");
 
-            resolve({message:"Error"});
+            resolve({type: "error", id: id, payload: {message:"Error, socket undefined"}});
         }
-
-        const id = requestId++;
 
         pending.set(id, resolve);
 

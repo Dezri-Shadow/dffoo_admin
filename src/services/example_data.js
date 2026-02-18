@@ -1,59 +1,51 @@
 /**
  * Server .env file keys. Can be changed with admin panel commmands.
- * Default values below
+ * 
+ * Current values below
  */
-export const ENV_VALUES = [
-    {
-        desc: '; How often a DB backup is made in minutes.',
-        key: 'BACKUP',
-        value: '"30"'
-    },
-    {
-        desc: '; Version of the game to run.',
-        key: 'VER',
-        value: '"GL"'
-    },
-    {
-        desc: '; For statically setting the IP Address of the host machine.',
-        key: 'IP_ADDRESS',
-        value: '""'
-    },
-    {
-        desc: '; Port to run the server on.',
-        key: 'PORT',
-        value: '"8000"'
-    },
-    {
-        desc: '; Uses https server instead of http. Must have key.pem & cert.pem in program root directory.',
-        key: 'USE_HTTPS',
-        value: '"false"'
-    },
-    {
-        desc: '; Enables the admin panel website at http://localhost:[ADMIN_PORT]/adminPanel',
-        key: 'ADMIN_PANEL',
-        value: '"true"'
-    },
-    {
-        desc: '; Port to run admin panel on.',
-        key: 'ADMIN_PORT',
-        value: '"8080"'
-    },
-    {
-        desc: '; Admin panel username.',
-        key: 'ADMIN_USERNAME',
-        value: '"admin"'
-    },
-    {
-        desc: '; Admin panel password.',
-        key: 'ADMIN_PASSWORD',
-        value: '"password"'
-    },
-    {
-        desc: '; Logger level.\n; debug = Logs everything\n; warn  = Logs basic and stuff to look out for\n; error = Logs just info and errors\n; info  = Just the basics are logged\n; Recommended as "error"',
-        key: 'LOG_LEVEL',
-        value: '"error"'
-    }
-];
+export const ENV_VALUES = {
+    /**
+     * in minutes
+     */
+    BACKUP: 30,
+    /**
+     * Game version running
+     * @type {"GL"|"JP"}
+     */
+    VER: 'GL',
+    /**
+     * IP Address running the server on.
+     */
+    IP_ADDRESS: '192.168.0.110',
+    /**
+     * Port running the server on.
+     */
+    PORT: '8000',
+    /**
+     * If the server uses https or not
+     */
+    USE_HTTPS: false,
+    /**
+     * If the admin panel is active
+     */
+    ADMIN_PANEL: true,
+    /**
+     * Admin panel port running the server on.
+     */
+    ADMIN_PORT: '8080',
+    /**
+     * Admin username
+     */
+    ADMIN_USERNAME: 'admin',
+    /**
+     * Admin password
+     */
+    ADMIN_PASSWORD: 'password',
+    /**
+     * Log level
+     */
+    LOG_LEVEL: 'error'
+};
 
 /**
  * Where the server store what assets and patches are installed

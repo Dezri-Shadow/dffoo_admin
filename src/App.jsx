@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Navigate, BrowserRouter, Route, Routes } from 'react-router-dom';
 const Admin = React.lazy(() => import('./AdminPanel.jsx'));
 import Loading from './components/Loading.jsx';
 import NotFound from './404.jsx';
@@ -45,7 +45,7 @@ export default function App() {
                 <ErrorBoundary>
                     <Suspense fallback={<Loading />}>
                         <Routes>
-                            <Route path="/" exact element={<Admin />} />
+                            <Route path="/" element={<Navigate replace to="/adminPanel" />} />
 
                             <Route path="/adminPanel" exact element={<Admin />} />
 
