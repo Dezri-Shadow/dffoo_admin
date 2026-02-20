@@ -1,7 +1,7 @@
 import React from "react";
-import ConsoleLog from "./components/ConsoleLog";
-import ExampleButtons from "./components/ExampleButtons";
-import Nav from "./components/Nav";
+import ConsoleLog from "./ConsoleLog";
+import ExampleButtons from "./ExampleButtons";
+import Nav from "./Nav";
 
 export default function Settings() {
     return (

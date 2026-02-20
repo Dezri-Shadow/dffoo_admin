@@ -10,6 +10,7 @@
     padding: 20px;
     text-decoration: none;
     display: inline-block;
+    text-align: center;
 }
 
 .navigation a:hover {
