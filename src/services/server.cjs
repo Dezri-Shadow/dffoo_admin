@@ -1381,13 +1381,119 @@ function _admin_websocket_functions(send, ws, msg, jobId) {
             }
             break;
         case "timeRequest":
-            send(ws, {
-                type: "timeRequest",
-                id: msg.id,
-                payload: { 
-                    time: humanReadable() 
-                }
-            });
+            {
+                send(ws, {
+                    type: "timeRequest",
+                    id: msg.id,
+                    payload: { 
+                        time: humanReadable() 
+                    }
+                });
+            }
+            break;
+        case "displayURLs":
+            {
+                send(ws, {
+                    type: "displayURLs",
+                    id: msg.id,
+                    payload: { 
+                        success: true 
+                    }
+                });
+            }
+            break;
+        case "getPatches":
+            {
+                send(ws, {
+                    type: "getPatches",
+                    id: msg.id,
+                    payload: [
+                        {
+                        "name": "Default_GL_Patch",
+                        "file": "Default_GL_Patch.zip",
+                        "patch_version": "0.0.1",
+                        "game_version": "GL",
+                        "min_server_version": "0.0.1",
+                        "desc": "Required patch to play the GL version of the game.",
+                        "requires": [],
+                        "conflicts": [],
+                        "mega": "1yIGyB4J#rO6G16179UuLTJiHhdwdcUOBsCxY52J4CfWfJ75XpQ4",
+                        "google": "1XeJ1uf5feK6Gxi4YqndHSoXgIvffpIIV",
+                        "hash": "866b8e1ffa1ca61f3005e565c5562fd572329745a63643c4928d47fde1e5c1bc"
+                        },
+                        {
+                        "name": "dummy_patch",
+                        "file": "dummy_patch.zip",
+                        "patch_version": "0.0.1",
+                        "game_version": "GL",
+                        "min_server_version": "0.0.1",
+                        "desc": "Not a real patch.",
+                        "requires": [
+                            {
+                                "name": "Default_GL_Patch",
+                                "patch_version": "0.0.1"
+                            }
+                        ],
+                        "conflicts": [],
+                        "mega": "1yIGyB4J#rO6G16179UuLTJiHhdwdcUOBsCxY52J4CfWfJ75XpQ4",
+                        "google": "1XeJ1uf5feK6Gxi4YqndHSoXgIvffpIIV",
+                        "hash": "866b8e1ffa1ca61f3005e565c5562fd572329745a63643c4928d47fde1e5c1bc"
+                        },
+                        {
+                        "name": "dummy_patch2",
+                        "file": "dummy_patch2.zip",
+                        "patch_version": "0.0.1",
+                        "game_version": "GL",
+                        "min_server_version": "0.0.1",
+                        "desc": "Not a real patch 2.",
+                        "requires": [],
+                        "conflicts": [
+                            {
+                                "name": "dummy_patch",
+                                "patch_version": "0.0.1"
+                            }
+                        ],
+                        "mega": "1yIGyB4J#rO6G16179UuLTJiHhdwdcUOBsCxY52J4CfWfJ75XpQ4",
+                        "google": "1XeJ1uf5feK6Gxi4YqndHSoXgIvffpIIV",
+                        "hash": "866b8e1ffa1ca61f3005e565c5562fd572329745a63643c4928d47fde1e5c1bc"
+                        }
+                    ]
+                });
+                
+            }
+            break;
+        case "getServerDB":
+            {
+                send(ws, {
+                    type: "getServerDB",
+                    id: msg.id,
+                    payload: {
+                        "ins_id": 100000000,
+                        "uid": 1000000,
+                        "player_id": 100000002,
+                        "assets": {
+                            "GL": {
+                                "iOS": "839e68579466558d31917fdfd4154524114623b6b23df15b310274a741075522",
+                                "Android": "ce8546797ce3769afccfa21d96d8871f86eb5006101965ac8985c83c331c4c17"
+                            },
+                            "JP": {
+                                "Android": "c800cf2effe770887ef0f41e1d1bbf34dff2e74774d77f1d1bf11a4862866d19",
+                                "iOS": "0fd0761ab659ee763ca6b6911d738cf2f8c0e699c1137b1068a1b414d11bfc3a"
+                            }
+                        },
+                        "patches": [
+                            {
+                                "name": "Default_GL_Patch",
+                                "patch_version": "0.0.1",
+                                "game_version": "GL",
+                                "requires": [],
+                                "conflicts": [],
+                                "hash": "866b8e1ffa1ca61f3005e565c5562fd572329745a63643c4928d47fde1e5c1bc"
+                            }
+                        ]
+                    }
+                });
+            }
             break;
         case "getEnvValues":
             {

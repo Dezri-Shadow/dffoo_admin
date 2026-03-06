@@ -4,6 +4,9 @@
 // "downloadLog"    // request & response
 // "error"          // response only
 // "timeRequest"    // request & response
+// "getPatches"     // request & response
+// "getServerDB"    // request & response
+// "displayURLs"    // request & response
 // "getEnvValues"   // request & response
 // "getConstValues" // request & response
 // "setEnvValue"    // request & response
@@ -32,6 +35,9 @@ type id = number;
 export type typeMsgRequests =
     | "downloadLog"
     | "timeRequest"
+    | "getPatches"
+    | "getServerDB"
+    | "displayURLs"
     | "getEnvValues"
     | "getConstValues"
     | "setEnvValue"
@@ -162,6 +168,90 @@ export interface RequestMap {
             }
         }
     },
+    displayURLs:{
+        request:{
+            type: "displayURLs",
+            id: id,
+            payload: any
+        },
+        response: {
+            type: "displayURLs",
+            id: id,
+            payload: {
+                success: boolean
+            }
+        }
+    },
+    getPatches:{
+        request:{
+            type: "getPatches",
+            id: id,
+            payload: any
+        },
+        response:{
+            type: "getPatches",
+            id: id,
+            payload: {
+                name: string;
+                file: string;
+                patch_version: string;
+                game_version: "GL" | "JP";
+                min_server_version: string;
+                desc: string;
+                requires: {
+                    name: string;
+                    patch_version: string;
+                }[];
+                conflicts: {
+                    name: string;
+                    patch_version: string;
+                }[];
+                mega: string;
+                google: string;
+                hash: string;
+            }[]
+        }
+    }
+    getServerDB:{
+        request:{
+            type: "getServerDB",
+            id: id,
+            payload: any
+        },
+        response:{
+            type: "getServerDB",
+            id: id,
+            payload: {
+                ins_id: number;
+                uid: number;
+                player_id: number;
+                assets: {
+                    GL: {
+                        Android?: string | undefined;
+                        iOS?: string | undefined;
+                    };
+                    JP: {
+                        Android?: string | undefined;
+                        iOS?: string | undefined;
+                    };
+                };
+                patches: {
+                    name: string;
+                    patch_version: string;
+                    game_version: "GL" | "JP";
+                    requires: {
+                        name: string;
+                        patch_version: string;
+                    }[];
+                    conflicts: {
+                        name: string;
+                        patch_version: string;
+                    }[];
+                    hash: string;
+                }[];
+            }
+        }
+    }
     getEnvValues: {
         request: {
             type: "getEnvValues",
