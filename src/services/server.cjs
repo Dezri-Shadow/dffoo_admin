@@ -1273,6 +1273,17 @@ function _admin_websocket_functions(send, ws, msg, jobId) {
                 }, 500);
             }
             break;
+        case "deleteAccount":
+            {
+                send(ws, {
+                    type: "deleteAccount",
+                    id: msg.id,
+                    payload: { 
+                        success: true 
+                    }
+                });
+            }
+            break;
         case "getUserAccounts":
             {
                 const dummy = [

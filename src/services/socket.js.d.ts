@@ -20,6 +20,7 @@
 // "uninstallAsset" // response only with jobId
 // "installPatch"   // response only with jobId
 // "uninstallPatch" // response only with jobId
+// "deleteAccount"  // request & response
 // "getUserAccounts"// request & response
 // "getSecret"      // request & response
 // "switchDevice"   // request & response
@@ -49,6 +50,7 @@ export type typeMsgRequests =
     | "uninstallAsset"// w/ jobId
     | "installPatch"  // w/ jobId
     | "uninstallPatch"// w/ jobId
+    | "deleteAccount"
     | "getUserAccounts"
     | "getSecret"
     | "checkServerVersion"
@@ -66,7 +68,7 @@ export type typeMsgSubscribe =
 
 export interface RequestMap {
     /**
-     * response only
+     * response only {@link typeMsgSubscribe}
      */
     log: {
         request: {
@@ -89,6 +91,9 @@ export interface RequestMap {
             };
         }
     },
+    /**
+     * Downloads the current log file from the server
+     */
     downloadLog: {
         request: {
             type: "downloadLog",
@@ -134,6 +139,9 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * Test function for general ping
+     */
     timeRequest: {
         request: {
             type: "timeRequest",
@@ -151,6 +159,9 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * gets the current constants that the server is working with
+     */
     getConstValues:{
         request: {
             type: "getConstValues",
@@ -162,12 +173,153 @@ export interface RequestMap {
             id: id,
             payload: {
                 /**
-                 * Server const key and value
+                 * start up arguments
                  */
-                [key: string]: any
+                ARGV: {[key: string]: any};
+                /**
+                 * root process directory
+                 */
+                DIR_NAME: string;
+                /**
+                 * file path to .env file
+                 */
+                ENV_FILE_PATH: string;
+                /**
+                 * key and values to current .env file
+                 * 
+                 * Can be changed with {@link RequestMap.setEnvValue}
+                 */
+                CURRENT_ENV_VALUES: {
+                    /**
+                     * Time your server backs up the DB in minutes
+                     */
+                    BACKUP: number;
+                    /**
+                     * Version of the game the server is running
+                     */
+                    VER: "GL"|"JP";
+                    /**
+                     * IP Address of the server
+                     */
+                    IP_ADDRESS: string;
+                    /**
+                     * Port the server is runnning on (not admin panel)
+                     */
+                    PORT: string;
+                    /**
+                     * For using https instead of http (advanced stuff)
+                     */
+                    USE_HTTPS: boolean;
+                    /**
+                     * if the admin panel is active
+                     */
+                    ADMIN_PANEL: boolean;
+                    /**
+                     * Admin panel port
+                     */
+                    ADMIN_PORT: string;
+                    /**
+                     * Admin panel username
+                     */
+                    ADMIN_USERNAME: string;
+                    /**
+                     * Admin panel password
+                     */
+                    ADMIN_PASSWORD: string;
+                    /**
+                     * Level the log file writes at
+                     */
+                    LOG_LEVEL: "debug"| "warn" | "error" | "info";
+                };
+                /**
+                 * array values for creating .env file and values when error
+                 */
+                DEFAULT_ENV_VALUES: {
+                    desc: string;
+                    key: string;
+                    value: string;
+                }[];
+                /**
+                 * Time your server backs up the DB in minutes
+                 */
+                BACKUP: number;
+                /**
+                 * file path to server.json
+                 */
+                SERVER_DB_PATH: string;
+                /**
+                 * file path to users.db
+                 */
+                USERS_DB_PATH: string;
+                /**
+                 * Server software version number
+                 */
+                SERVER_VERSION: string;
+                /**
+                 * For using https instead of http (advanced stuff)
+                 */
+                USE_HTTPS: boolean;
+                /**
+                 * Level the log file writes at
+                 */
+                LOG_LEVEL: "debug"| "warn" | "error" | "info";
+                /**
+                 * Version of the game the server is running
+                 */
+                VER: "GL" | "JP";
+                /**
+                 * IP Address of the server
+                 */
+                IP_ADDRESS: string;
+                /**
+                 * Port the server is runnning on (not admin panel)
+                 */
+                PORT: string;
+                /**
+                 * full url of the server
+                 */
+                SERVER_URL: string;
+                /**
+                 * Expected client master data version
+                 */
+                CLIENT_MVER: number;
+                /**
+                 * Client software version (will never change)
+                 */
+                CLIENT_VER: {
+                    GL: number;
+                    JP: number;
+                };
+                /**
+                 * if the admin panel is active
+                 */
+                ADMIN_PANEL: boolean;
+                /**
+                 * Admin panel port
+                 */
+                ADMIN_PORT: string,
+                /**
+                 * Admin panel username
+                 */
+                ADMIN_USERNAME: string,
+                /**
+                 * Admin panel password
+                 */
+                ADMIN_PASSWORD: string,
+                /**
+                 * Machine architecture like `x64` or `arm64`
+                 */
+                MACHINE_ARCH: string,
+                /**
+                 * Machine operating system
+                 */
+                MACHINE_OS: string
             }
         }
     },
+    /**
+     * Displays in the log where you can manually download the asset or patch data with instructions 
+     */
     displayURLs:{
         request:{
             type: "displayURLs",
@@ -182,6 +334,9 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * Gets the currently available patch list to check against the current installed patches 
+     */
     getPatches:{
         request:{
             type: "getPatches",
@@ -212,6 +367,9 @@ export interface RequestMap {
             }[]
         }
     }
+    /**
+     * current server running config, including the assets packages and patches installed
+     */
     getServerDB:{
         request:{
             type: "getServerDB",
@@ -252,6 +410,9 @@ export interface RequestMap {
             }
         }
     }
+    /**
+     * Editable values for setting the .env file
+     */
     getEnvValues: {
         request: {
             type: "getEnvValues",
@@ -263,12 +424,51 @@ export interface RequestMap {
             id: id,
             payload: {
                 /**
-                 * Server env key and value set
+                 * Time your server backs up the DB in minutes
                  */
-                [key: string]: any
+                BACKUP: number;
+                /**
+                 * Version of the game the server is running
+                 */
+                VER: "GL"|"JP";
+                /**
+                 * IP Address of the server
+                 */
+                IP_ADDRESS: string;
+                /**
+                 * Port the server is runnning on (not admin panel)
+                 */
+                PORT: string;
+                /**
+                 * For using https instead of http (advanced stuff)
+                 */
+                USE_HTTPS: boolean;
+                /**
+                 * if the admin panel is active
+                 */
+                ADMIN_PANEL: boolean;
+                /**
+                 * Admin panel port
+                 */
+                ADMIN_PORT: string;
+                /**
+                 * Admin panel username
+                 */
+                ADMIN_USERNAME: string;
+                /**
+                 * Admin panel password
+                 */
+                ADMIN_PASSWORD: string;
+                /**
+                 * Level the log file writes at
+                 */
+                LOG_LEVEL: "debug"| "warn" | "error" | "info";
             }
         }
     }
+    /**
+     * update {@link RequestMap.getEnvValues}
+     */
     setEnvValue: {
         request: {
             type: "setEnvValue",
@@ -295,6 +495,9 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * test function
+     */
     startProcess: {
         request: {
             type: "startProcess",
@@ -320,6 +523,9 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * test function
+     */
     test: {
         request: {
             type: "test",
@@ -334,6 +540,9 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * Gets the current server software version and checks if there is an update
+     */
     checkServerVersion: {
         request: {
             type: "checkServerVersion",
@@ -351,7 +560,7 @@ export interface RequestMap {
         }
     },
     /**
-     * response only
+     * response only {@link typeMsgSubscribe}
      */
     jobProgress: {
         request: {
@@ -379,7 +588,7 @@ export interface RequestMap {
         }
     },
     /**
-     * response only
+     * response only {@link typeMsgSubscribe}
      */
     jobComplete: {
         request: {
@@ -406,6 +615,9 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * restarts the server instance (not a full restart)
+     */
     restartServer: {
         request: {
             type: "restartServer",
@@ -423,6 +635,9 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * kill the process
+     */
     shutdownServer: {
         request: {
             type: "shutdownServer",
@@ -440,6 +655,11 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * Installs an asset package
+     * 
+     * Gets updates with jobId
+     */
     installAsset: {
         request: {
             type: "installAsset",
@@ -478,6 +698,11 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * Uninstalls an asset package
+     * 
+     * Gets updates with jobId
+     */
     uninstallAsset: {
         request: {
             type: "uninstallAsset",
@@ -512,6 +737,11 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * Installs a patch
+     * 
+     * Gets updates with jobId
+     */
     installPatch: {
         request: {
             type: "installPatch",
@@ -546,6 +776,11 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * Uninstalls a patch
+     * 
+     * Gets updates with jobId
+     */
     uninstallPatch: {
         request: {
             type: "uninstallPatch",
@@ -576,6 +811,30 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * Deletes a player account from the db. Also removes folder of all data
+     */
+    deleteAccount:{
+        request: {
+            type: "deleteAccount",
+            id: id,
+            payload: {
+                id: number
+            }
+        },
+        response: {
+            type: "deleteAccount",
+            id: id,
+            payload: {
+                success: boolean
+            }
+        }
+    },
+    /**
+     * Gets all accounts if a value isn't set 
+     * 
+     * Only set one uuid, player_id or ip_address
+     */
     getUserAccounts: {
         request: {
             type: "getUserAccounts",
@@ -605,8 +864,10 @@ export interface RequestMap {
                 }[]
             }
         }
-
     },
+    /**
+     * Gets the user account (bridge replacement login software) password reset secret
+     */
     getSecret: {
         request: {
             type: "getSecret",
@@ -633,6 +894,9 @@ export interface RequestMap {
             }
         }
     },
+    /**
+     * switches a player_id attached to a uuid
+     */
     switchDevice: {
         request: {
             type: "switchDevice",
